@@ -26,8 +26,8 @@ abstract class WordRoomDatabase : RoomDatabase() {
                     "word_db"
                 )
                     .addCallback(WordDatabaseCallback(scope))
-                    .setQueryCallback(RoomDatabase.QueryCallback { sqlQuery, bindArgs ->
-                        Log.d("@@@", "SQL: $sqlQuery, Args: $bindArgs")
+                    .setQueryCallback({ sqlQuery, bindArgs ->
+                        Log.d("WordRoomDatabase", "SQL: $sqlQuery, Args: $bindArgs")
                     }, Executors.newSingleThreadExecutor())
 //                    .addMigrations()
                     .build()
@@ -68,7 +68,6 @@ abstract class WordRoomDatabase : RoomDatabase() {
                 word = Word("World!")
                 wordDao.insert(word)
 
-                // TODO: Add your own words!
                 word = Word("TODO!")
                 wordDao.insert(word)
             }
