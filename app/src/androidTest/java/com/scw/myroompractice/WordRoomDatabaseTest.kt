@@ -3,8 +3,7 @@ package com.scw.myroompractice
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert
@@ -35,17 +34,14 @@ class WordRoomDatabaseTest {
     fun test() = runTest {
         val text = "Test"
         val word = Word(text)
-        val job = launch {
-            dao.insert(word)
-            dao.findWords(text).collect {
-                Assert.assertTrue(it.firstOrNull()?.word == text)
-            }
-            dao.delete(word)
-            dao.findWords(text).collect {
-                Assert.assertTrue(it.isEmpty())
-            }
+        dao.insert(word)
+        val queryWord = dao.findWords(text).first().let {
+            Assert.assertTrue(it.first().word == text)
+            it.first()
         }
-        advanceUntilIdle()
-        job.cancel()
+        dao.delete(queryWord)
+        dao.findWords(text).first().also {
+            Assert.assertTrue(it.isEmpty())
+        }
     }
 }
